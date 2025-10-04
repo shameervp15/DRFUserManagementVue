@@ -1,10 +1,10 @@
 <template>
-  <div>
+  <div class="container">
     <h2>Register</h2>
     <form @submit.prevent="doRegister">
-      <input v-model="username" placeholder="username" required />
-      <input v-model="email" placeholder="email" type="email" required />
-      <input v-model="password" type="password" placeholder="password" required />
+      <input v-model="username" placeholder="Username" required />
+      <input v-model="email" placeholder="Email address" type="email" required />
+      <input v-model="password" type="password" placeholder="Password" required />
       <button>Register</button>
     </form>
   </div>
@@ -28,3 +28,16 @@ export default {
   }
 }
 </script>
+
+<style>
+.container {
+  max-width: 600px;
+  margin: auto;
+  padding: 20px;
+}
+textarea, input {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+}
+</style>

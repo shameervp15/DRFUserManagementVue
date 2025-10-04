@@ -2,8 +2,8 @@
   <div class="container">
     <h2>{{ note.title }}</h2>
     <p>{{ note.description }}</p>
-    <p><strong>Created:</strong> {{ note.created_at }}</p>
-    <p><strong>Updated:</strong> {{ note.modified_at }}</p>
+    <p><strong>Created:</strong> {{ formatDate(note.created_at) }}</p>
+    <p><strong>Updated:</strong> {{ formatDate(note.modified_at) }}</p>
     <div v-if="note.attachment">
       <a :href="note.attachment" target="_blank">View Attachment</a>
     </div>
@@ -39,6 +39,14 @@ export default {
       file.value = e.target.files[0]
     }
 
+    function formatDate(val) {
+        if (!val) return ''
+        return new Date(val).toLocaleString('en-IN', {
+            dateStyle: 'medium',
+            timeStyle: 'short'
+        })
+    }
+
     async function updateNote() {
       const formData = new FormData()
       formData.append("title", note.value.title)
@@ -53,7 +61,7 @@ export default {
     }
 
     onMounted(load)
-    return { note, updateNote, onFileChange }
+    return { note, updateNote, onFileChange, formatDate }
   }
 }
 </script>

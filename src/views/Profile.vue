@@ -9,17 +9,20 @@
       <textarea v-model="profile.address"></textarea>
 
       <label>Date of Birth</label>
-      <input type="date" v-model="profile.dateofbirth" />
+      <input 
+        v-model="profile.date_of_birth" 
+        type="date" 
+        :readonly="!!profile.date_of_birth" 
+        :placeholder="!profile.date_of_birth ? 'YYYY-MM-DD' : ''"
+      />
 
       <label>Gender</label>
-      <select v-model="profile.gender">
-        <option value="M">Male</option>
-        <option value="F">Female</option>
-        <option value="O">Other</option>
-      </select>
+      <input 
+        v-model="profile.geneder"
+      />
 
       <label>Mobile Number</label>
-      <input v-model="profile.mobilenumber" maxlength="10" />
+      <input v-model="profile.mobilenumber" />
 
       <button>Save</button>
     </form>
