@@ -1,0 +1,28 @@
+import { createRouter, createWebHistory } from 'vue-router'
+import Login from '../views/Login.vue'
+import Register from '../views/Register.vue'
+import NotesList from '../views/NotesList.vue'
+import NoteDetail from '../views/NoteDetail.vue'
+import Profile from '../views/Profile.vue'
+
+const routes = [
+  { path: '/', redirect: '/login' },
+  { path: '/login', component: Login },
+  { path: '/register', component: Register },
+  { path: '/notes', component: NotesList },
+  { path: '/notes/:id', component: NoteDetail, props: true },
+  { path: '/profile', component: Profile }
+]
+
+const router = createRouter({ history: createWebHistory(), routes })
+
+// guard: simple token check (keeps router independent of store)
+router.beforeEach((to, from, next) => {
+  const publicPages = ['/login', '/register']
+  const authRequired = !publicPages.includes(to.path)
+  const loggedIn = !!localStorage.getItem('access_token')
+  if (authRequired && !loggedIn) return next('/login')
+  next()
+})
+
+export default router
