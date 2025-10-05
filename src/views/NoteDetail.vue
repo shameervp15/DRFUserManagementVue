@@ -15,6 +15,9 @@
       <input type="file" @change="onFileChange" />
       <button>Save</button>
     </form>
+    <form @submit.prevent="deleteNote">
+      <button>Delete Note</button>
+    </form>
   </div>
 </template>
 
@@ -60,8 +63,14 @@ export default {
       router.push("/notes")
     }
 
+    async function deleteNote() {
+        await api.delete(`notes/${route.params.id}/`)
+      alert("Note deleted successfully!")
+      router.push("/notes")
+    }
+
     onMounted(load)
-    return { note, updateNote, onFileChange, formatDate }
+    return { note, updateNote, onFileChange, formatDate, deleteNote }
   }
 }
 </script>
