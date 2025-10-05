@@ -72,6 +72,7 @@
     <form @submit.prevent="createNote" class="create-form">
       <input v-model="title" placeholder="Title" required class="input-field" />
       <textarea v-model="content" placeholder="Description" class="input-field"></textarea>
+      <input type="file" @change="handleFileChange" class="input-field" />
       <button type="submit" class="btn btn-create">Create</button>
     </form>
   </div>
@@ -100,6 +101,12 @@ export default {
         { value: '-title', text: 'Title (Z-A)' },
         { value: 'created_at', text: 'Oldest First' },
     ];
+
+    const file = ref(null);
+
+    function handleFileChange(event) {
+        file.value = event.target.files[0] || null;
+    }
 
     async function fetchNotes() {
         loading.value = true;
@@ -153,14 +160,20 @@ export default {
 
     async function load(){ const res = await api.get('notes/'); notes.value = res.data.results }
     async function createNote(){
-      await api.post('notes/', { title: title.value, description: content.value })
-      title.value = content.value = ''
+      const formData = new FormData();
+        formData.append('title', title.value);
+        formData.append('description', content.value);
+        if (file.value) {
+            formData.append('attachment', file.value);
+        }
+      await api.post('notes/', formData)
+      title.value = content.value = file.value = '' 
       await load()
     }
     onMounted(load)
     return { notes, title, content, createNote, fetchNotes, searchTerm, orderBy,
             sortOptions, handleSearch, handleSort, changePage, currentPage,
-            totalPages, totalNotes
+            totalPages, totalNotes, handleFileChange
         }
   }
 }
