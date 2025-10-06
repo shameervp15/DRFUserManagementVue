@@ -22,7 +22,25 @@ export default {
         await api.post('users/register/', { username: username.value, email: email.value, password: password.value })
         alert('Registered — please login')
         router.push('/login')
-      } catch(e){ alert('register failed') }
+      } catch(error){ 
+        if (error.response && error.response.data) {
+          const data = error.response.data
+          let message = ''
+
+          if (typeof data === 'string') {
+            message = data
+          } else if (Array.isArray(data)) {
+            message = data.join(', ')
+          } else if (typeof data === 'object') {
+            message = Object.values(data).flat().join(', ')
+          } else {
+            message = 'Registration failed.'
+          }
+          alert(message)
+        } else {
+          alert('Network or server error.')
+        }
+      }
     }
     return { username, email, password, doRegister }
   }
