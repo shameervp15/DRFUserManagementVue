@@ -1,23 +1,26 @@
 <template>
   <div class="container">
-    <h2>{{ note.title }}</h2>
-    <p>{{ note.description }}</p>
-    <p><strong>Created:</strong> {{ formatDate(note.created_at) }}</p>
-    <p><strong>Updated:</strong> {{ formatDate(note.modified_at) }}</p>
-    <div v-if="note.attachment">
-      <a :href="note.attachment" target="_blank">View Attachment</a>
+    <div v-if="message" class="alert">{{ message }}</div>
+    <div v-else-if="note">
+      <h2>{{ note.title }}</h2>
+      <p>{{ note.description }}</p>
+      <p><strong>Created:</strong> {{ formatDate(note.created_at) }}</p>
+      <p><strong>Updated:</strong> {{ formatDate(note.modified_at) }}</p>
+      <div v-if="note.attachment">
+        <a :href="note.attachment" target="_blank">View Attachment</a>
+      </div>
+      <hr/>
+      <h3>Edit Note</h3>
+      <form @submit.prevent="updateNote">
+        <input v-model="note.title" placeholder="Title" />
+        <textarea v-model="note.description" placeholder="Description"></textarea>
+        <input type="file" @change="onFileChange" />
+        <button>Save</button>
+      </form>
+      <form @submit.prevent="deleteNote">
+        <button>Delete Note</button>
+      </form>
     </div>
-    <hr/>
-    <h3>Edit Note</h3>
-    <form @submit.prevent="updateNote">
-      <input v-model="note.title" placeholder="Title" />
-      <textarea v-model="note.description" placeholder="Description"></textarea>
-      <input type="file" @change="onFileChange" />
-      <button>Save</button>
-    </form>
-    <form @submit.prevent="deleteNote">
-      <button>Delete Note</button>
-    </form>
   </div>
 </template>
 
@@ -32,10 +35,22 @@ export default {
     const router = useRouter()
     const note = ref({})
     const file = ref(null)
+    const message = ref('')
 
     async function load() {
-      const res = await api.get(`notes/${route.params.id}/`)
-      note.value = res.data
+      try {
+        const res = await api.get(`notes/${route.params.id}/`)
+        note.value = res.data
+      } catch (err) {
+        if (err.response && err.response.status === 404) {
+          message.value = `Note with id "${route.params.id}" not found`
+        } else {
+          message.value = 'An error occurred while loading the note.'
+        }
+        setTimeout(() => {
+          router.push('/notes')
+        }, 3000)
+      }
     }
 
     function onFileChange(e) {
@@ -70,7 +85,7 @@ export default {
     }
 
     onMounted(load)
-    return { note, updateNote, onFileChange, formatDate, deleteNote }
+    return { note, updateNote, onFileChange, formatDate, deleteNote, message }
   }
 }
 </script>
@@ -85,5 +100,12 @@ textarea, input {
   display: block;
   width: 100%;
   margin-bottom: 10px;
+}
+.alert {
+  background-color: #ffe5e5;
+  color: #a00;
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
 }
 </style>

@@ -12,10 +12,19 @@ const routes = [
   { path: '/login', component: Login },
   { path: '/register', component: Register },
   { path: '/notes', component: NotesList },
-  { path: '/notes/:id', component: NoteDetail, props: true },
+  { path: '/notes/:id(\\d+)', component: NoteDetail, props: true },
   { path: '/profile', component: Profile },
   { path: '/users/reset-password/', component: PasswordReset },
   { path: '/users/reset-password-confirm/:uid/:token', component: PasswordResetConfirm },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFoundRedirect',
+    beforeEnter: (to, from, next) => {
+      const loggedIn = !!localStorage.getItem('access_token')
+      if (loggedIn) next('/notes')
+      else next('/login')
+    }
+  }
 ]
 
 const router = createRouter({ history: createWebHistory(), routes })
@@ -29,6 +38,7 @@ router.beforeEach((to, from, next) => {
   const authRequired = !publicPages.includes(to.path)
   const loggedIn = !!localStorage.getItem('access_token')
   if (authRequired && !loggedIn) return next('/login')
+  if (to.path === '/login' && loggedIn) return next('/notes')
   next()
 })
 
