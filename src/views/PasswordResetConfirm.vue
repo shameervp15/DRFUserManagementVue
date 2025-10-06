@@ -34,12 +34,12 @@ const loading = ref(false);
 const error = ref(false);
 
 onMounted(() => {
-    uid.value = route.params.uid;
-    token.value = route.params.token;
+  uid.value = route.query.uid;
+  token.value = route.query.token;
     
-    if (uid.value && token.value) {
-        isValid.value = true;
-    }
+  if (uid.value && token.value) {
+      isValid.value = true;
+  }
 });
 
 async function confirmReset() {
@@ -57,11 +57,11 @@ async function confirmReset() {
     const data = {
         uid: uid.value,
         token: token.value,
-        new_password: password.value,
-        re_new_password: passwordConfirm.value
+        password: password.value,
+        password2: passwordConfirm.value
     };
     
-    await api.post('auth/users/reset_password_confirm/', data);
+    await api.post('/users/auth/password-reset-confirm/', data);
     message.value = 'Password has been successfully reset. Redirecting to login...';
     
     // Redirect after success
@@ -71,7 +71,7 @@ async function confirmReset() {
 
   } catch (err) {
     error.value = true;
-    message.value = 'Invalid token or link expired. Please request a new reset.';
+    message.value = (err.response?.data) ? JSON.stringify(err.response.data) : 'Something went wrong. Please try again.'
     console.error(err);
   } finally {
     loading.value = false;

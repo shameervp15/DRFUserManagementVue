@@ -25,11 +25,11 @@ async function requestReset() {
   error.value = false;
 
   try {
-    await api.post('auth/users/reset_password/', { email: email.value });
+    await api.post('/users/auth/password-reset/', { email: email.value });
     message.value = 'If your account exists, a reset link has been sent to your email.';
   } catch (err) {
     error.value = true;
-    message.value = 'An error occurred. Please try again.'; 
+    message.value =  err.response?.data?.detail || 'Something went wrong. Please try again.'
     console.error(err);
   } finally {
     loading.value = false;

@@ -15,7 +15,7 @@ const routes = [
   { path: '/notes/:id(\\d+)', component: NoteDetail, props: true },
   { path: '/profile', component: Profile },
   { path: '/users/reset-password/', component: PasswordReset },
-  { path: '/users/reset-password-confirm/:uid/:token', component: PasswordResetConfirm },
+  { path: '/reset-password', component: PasswordResetConfirm },
   {
     path: '/:pathMatch(.*)*',
     name: 'NotFoundRedirect',
@@ -33,7 +33,7 @@ const router = createRouter({ history: createWebHistory(), routes })
 router.beforeEach((to, from, next) => {
   const publicPages = [
     '/login', '/register', '/users/reset-password/', 
-    '/users/reset-password-confirm/:uid/:token'
+    '/reset-password'
   ]
   const authRequired = !publicPages.includes(to.path)
   const loggedIn = !!localStorage.getItem('access_token')
